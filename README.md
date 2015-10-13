@@ -9,4 +9,6 @@ Alternatively you can use LuvSocks in your lit project by defining it as a depen
 > b42nk/luvsocks
 
 In the frontend just use this to include LuvSocks
-> <script src="//raw.githubusercontent.com/b42nk/LuvSocks/master/js/luvsocks.js"></script>
+```html
+<script src="//raw.githubusercontent.com/b42nk/LuvSocks/master/js/luvsocks.js"></script>
+``
