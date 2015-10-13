@@ -7,3 +7,6 @@ LuvSocks requires [lit](https://github.com/luvit/lit)
 
 Alternatively you can use LuvSocks in your lit project by defining it as a dependency.
 > b42nk/luvsocks
+
+In the frontend just use this to include LuvSocks
+> <script src="//raw.githubusercontent.com/b42nk/LuvSocks/master/js/luvsocks.js"></script>
