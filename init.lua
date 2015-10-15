@@ -1,7 +1,9 @@
 local WebSocket = require("websocket")
 local json = require("json")
 local table = require("table")
-
+local md5 = require("md5")
+local os = require("os")
+local math = require("math")
 
 exports.new = function(func)
 	local t = {}
@@ -32,30 +34,57 @@ exports.new = function(func)
 	end
 
 	t.server = WebSocket.server.new()
-	:on("connect", function(client)
-		client._send = client.send
+	:on("connect", function(sock)
+		local client = {}
+		client.socket = sock
+		client.listener = {}
+		client.ip = client.socket:address().ip
+		client.uid = md5.hex(client.ip .. tostring(os.time()) .. tostring(math.random()))
+		client.socket.client = client
+
 		client.send = function(self, key, data)
-			data = json.encode({key, data})
-			client:_send(data)
+			if type(data) == "table" then
+				data = base64.encodeTable({packet = key, data = data})
+				client.socket:send(json.encode(data))
+			end
 		end
+
+		client.on = function(self, event, cb)
+			self.listener[event] = cb
+		end
+
+		client.call = function(self, event, ...)
+			if type(self.listener[event]) == "function" then
+				self.listener[event](...)
+			end
+		end
+
+		t.clients[client.uid] = client
 
 		t:call("connect", client)
 	end)
-	:on("disconnect", function(client)
-		t:call("disconnect", client)
+	:on("disconnect", function(sock)
+		sock.client:call("disconnect")
+		t:call("disconnect", sock.client)
+		t.clients[sock.client.uid] = nil
+		sock.client.socket = nil
+		sock.client = nil
 	end)
-	:on("timeout", function(client)
-		t:call("disconnect", client)
+	:on("timeout", function(sock)
+		sock.client:call("disconnect")
+		t:call("disconnect", sock.client)
+		t.clients[sock.client.uid] = nil
+		sock.client.socket = nil
+		sock.client = nil
 	end)
-	:on("data", function(client, message)
-		client.send = function(self, key, data)
-			data = json.encode({key, data})
-			client:_send(data)
+	:on("data", function(sock, message)
+		if message and #message > 3 then
+			local data = base64.decodeTable(json:decode(message))
+			if data.packet then
+				sock.client:call(data.packet, data.data)
+				t:call(data.packet, sock.client, data.data)
+			end
 		end
-		local data = json:decode(message)
-		local key = data[1]
-		data = data[2]
-		t:call(key, data)
 	end)
 
 	t.listen = function(self, ...)
