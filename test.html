@@ -1,0 +1,21 @@
+<head>
+	<script src="//raw.githubusercontent.com/b42nk/LuvSocks/master/js/luvsocks.js"></script>
+</head>
+<body>
+	Open the console!
+	<script>
+		var socket = new LuvSocks("127.0.0.1", 1337);
+		socket.on("connect", function(){
+			socket.send("pong", "How are you?");
+			console.log("Pong #1 sent!");
+		});
+		socket.on("disconnect", function(){
+			setTimeout(function(){ window.location.reload(); }, 3000);
+		});
+		socket.on("ping", function(data){
+			console.log("Ping received.");
+			socket:send("pong", "I luv socks");
+			console.log("Pong #2 sent!");
+		});
+	</script>
+</body>
