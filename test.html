@@ -14,7 +14,8 @@
 		});
 		socket.on("ping", function(data){
 			console.log("Ping received.");
-			socket:send("pong", "I luv socks");
+			console.log(data);
+			socket.send("pong", {msg:"I luv socks"});
 			console.log("Pong #2 sent!");
 		});
 	</script>
