@@ -32,7 +32,6 @@ var decodeTable = function(t){
 
 var Zed_WS = function(self){
   self.listener = {};
-  self.connectionHandlers = {};
 
   var ws = new WebSocket("ws://" + self.host + ":" + (self.port + 1) + "/");
 
@@ -47,8 +46,8 @@ var Zed_WS = function(self){
   };
 
   ws.onopen = function()  {
-    for(i in self.connectionHandlers){
-      self.connectionHandlers[i]();
+    if(self.listener["connect"]){
+      self.listener["connect"]()
     }
   };
 
@@ -66,12 +65,6 @@ var Zed_WS = function(self){
 
   self.on = function(packet, cb){
     self.listener[packet] = cb;
-  };
-
-  self.onConnection = function(func){
-    if (typeof(func) === "function") {
-      self.connectionHandlers[self.connectionHandlers.length] = func
-    }
   };
 
   window.onbeforeunload = function(e) {
