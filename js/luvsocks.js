@@ -33,7 +33,7 @@ var decodeTable = function(t){
 var Zed_WS = function(self){
   self.listener = {};
 
-  var ws = new WebSocket("ws://" + self.host + ":" + (self.port + 1) + "/");
+  var ws = new WebSocket("ws://" + self.host + ":" + self.port + "/");
 
   ws.onmessage = function (evt)
   {
