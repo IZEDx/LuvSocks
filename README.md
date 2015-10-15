@@ -10,5 +10,5 @@ Alternatively you can use LuvSocks in your lit project by defining it as a depen
 
 In the frontend just use this to include LuvSocks
 ```html
-<script src="//raw.githubusercontent.com/b42nk/LuvSocks/master/js/luvsocks.js"></script>
+<script src="http://raw.githubusercontent.com/b42nk/LuvSocks/master/js/luvsocks.js"></script>
 ```
