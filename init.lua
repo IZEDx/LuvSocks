@@ -4,6 +4,7 @@ local table = require("table")
 local md5 = require("md5")
 local os = require("os")
 local math = require("math")
+local base64 = require("base64")
 
 exports.new = function(func)
 	local t = {}

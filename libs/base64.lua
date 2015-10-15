@@ -52,10 +52,25 @@ end
 --- END ORIGINAL
 ---------------------------------------------------------
 
-exports.encodeTable = function(t)
-    local newt = {}
+local tableStuff = function(direction)
+    local f = function(t)
+        local newt = {}
+        if type(t) == "table" then
+            for k,v in pairs(t) do
+                if type(v) == "string" or type(v) == "number" or type(v) == "bool" then
+                    newt[base64[direction](tostring(k))] =  base64[direction](tostring(v))
+                elseif type(v) == "table" then
+                    newt[base64[direction](tostring(k))] = f(v)
+                end
+            end
+        end
+        return newt
+    end
+    return f
+end
 
-
+exports.encodeTable = tableStuff("encode")
+exports.decodeTable = tableStuff("decode")
 
 
 exports.encode = base64.encode
