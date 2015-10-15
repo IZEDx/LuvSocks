@@ -51,22 +51,22 @@ end
 ---------------------------------------------------------
 --- END ORIGINAL
 ---------------------------------------------------------
-
+local funcs = {}
 local tableStuff = function(direction)
-    local f = function(t)
+    funcs[direction] = function(t)
         local newt = {}
         if type(t) == "table" then
             for k,v in pairs(t) do
                 if type(v) == "string" or type(v) == "number" or type(v) == "bool" then
                     newt[base64[direction](tostring(k))] =  base64[direction](tostring(v))
                 elseif type(v) == "table" then
-                    newt[base64[direction](tostring(k))] = f(v)
+                    newt[base64[direction](tostring(k))] = funcs[direction](v)
                 end
             end
         end
         return newt
     end
-    return f
+    return funcs[direction]
 end
 
 exports.encodeTable = tableStuff("encode")
