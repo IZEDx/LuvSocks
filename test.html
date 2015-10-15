@@ -1,22 +1,31 @@
+
 <head>
 	<script src="http://raw.githubusercontent.com/b42nk/LuvSocks/master/js/luvsocks.js"></script>
 </head>
 <body>
 	Open the console!
 	<script>
-		var socket = new LuvSocks("127.0.0.1", 1337);
-		socket.on("connect", function(){
-			socket.send("pong", "How are you?");
-			console.log("Pong #1 sent!");
-		});
-		socket.on("disconnect", function(){
-			setTimeout(function(){ window.location.reload(); }, 3000);
-		});
-		socket.on("ping", function(data){
-			console.log("Ping received.");
-			console.log(data);
-			socket.send("pong", {msg:"I luv socks"});
-			console.log("Pong #2 sent!");
-		});
+		var socket;
+		function connect(){
+			socket = new LuvSocks("127.0.0.1", 1337);
+
+			socket.on("connect", function(){
+				console.log("Connected!");
+			});
+
+			// Reconnect on disconnect.
+			socket.on("disconnect", function(){
+				connect();
+			});
+
+			socket.on("ping", function(data){
+				console.log("Ping received: " + data);
+
+				socket.send("pong", "How are you?"); // send supports tables, strings and numbers on both, server and client.
+
+				console.log("Pong sent: How are you?");
+			});
+		}
+		connect();
 	</script>
 </body>
