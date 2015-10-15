@@ -44,10 +44,8 @@ exports.new = function(func)
 		client.socket.client = client
 
 		client.send = function(self, key, data)
-			if type(data) == "table" then
-				data = base64.encodeTable({packet = key, data = data})
-				client.socket:send(json.encode(data))
-			end
+			local _data = base64.encodeTable({packet = key, data = data})
+			client.socket:send(json.encode(_data))
 		end
 
 		client.on = function(self, event, cb)
