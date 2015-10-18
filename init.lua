@@ -41,7 +41,8 @@ exports.new = function(func)
 		client.listener = {}
 		client.ip = client.socket:address().ip
 		client.uid = md5.hex(client.ip .. tostring(os.time()) .. tostring(math.random()))
-		client.socket.client = client
+		sock.client = client
+		sock.uid = client.uid
 
 		client.send = function(self, key, data)
 			local _data = base64.encodeTable({packet = key, data = data})
@@ -62,19 +63,21 @@ exports.new = function(func)
 
 		t:call("connect", client)
 	end)
-	:on("disconnect", function(client)
-		client:call("disconnect")
-		t:call("disconnect", client)
-		t.clients[client.uid] = nil
-		client.socket = nil
-		client = nil
+	:on("disconnect", function(sock)
+		sock.client = t.clients[sock.uid]
+		sock.client:call("disconnect")
+		t:call("disconnect", sock.client)
+		t.clients[sock.client.uid] = nil
+		sock.client.socket = nil
+		sock.client = nil
 	end)
-	:on("timeout", function(client)
-		client:call("timeout")
-		t:call("timeout", client)
-		t.clients[client.uid] = nil
-		client.socket = nil
-		client = nil
+	:on("timeout", function(sock)
+		sock.client = t.clients[sock.uid]
+		sock.client:call("timeout")
+		t:call("timeout", sock.client)
+		t.clients[sock.client.uid] = nil
+		sock.client.socket = nil
+		sock.client = nil
 	end)
 	:on("data", function(sock, message)
 		if message and #message > 3 then
