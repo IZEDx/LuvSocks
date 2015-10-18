@@ -62,19 +62,19 @@ exports.new = function(func)
 
 		t:call("connect", client)
 	end)
-	:on("disconnect", function(sock)
-		sock.client:call("disconnect")
-		t:call("disconnect", sock.client)
-		t.clients[sock.client.uid] = nil
-		sock.client.socket = nil
-		sock.client = nil
+	:on("disconnect", function(client)
+		client:call("disconnect")
+		t:call("disconnect", client)
+		t.clients[client.uid] = nil
+		client.socket = nil
+		client = nil
 	end)
-	:on("timeout", function(sock)
-		sock.client:call("disconnect")
-		t:call("disconnect", sock.client)
-		t.clients[sock.client.uid] = nil
-		sock.client.socket = nil
-		sock.client = nil
+	:on("timeout", function(client)
+		client:call("timeout")
+		t:call("timeout", client)
+		t.clients[client.uid] = nil
+		client.socket = nil
+		client = nil
 	end)
 	:on("data", function(sock, message)
 		if message and #message > 3 then
